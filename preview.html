@@ -1,0 +1,5366 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #0b0b0d;
+
+    font-family:
+        "M PLUS Rounded 1c",
+        "Segoe UI Rounded",
+        "Hiragino Maru Gothic ProN",
+        "Yu Gothic UI",
+        "Noto Sans JP",
+        "Quicksand",
+        sans-serif;
+
+    color: white;
+}
+
+button {
+    font-family: inherit;
+}
+
+.rounded-num {
+    font-family:
+        "Fredoka",
+        "M PLUS Rounded 1c",
+        "Segoe UI Rounded",
+        "Hiragino Maru Gothic ProN",
+        "Yu Gothic UI",
+        "Quicksand",
+        sans-serif;
+
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+}
+
+
+/* =========================================================
+   全体
+========================================================= */
+
+.dashboard {
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: row;
+
+    background: #0b0b0d;
+}
+
+.col {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+}
+
+.left-col {
+    flex: 1 1 auto;
+}
+
+.right-col {
+    flex: 0 0 clamp(300px, 30vw, 420px);
+
+    position: relative;
+
+    padding: 20px;
+}
+
+
+/* =========================================================
+   左ページ
+========================================================= */
+
+.col-pages {
+    width: 100%;
+    height: 100%;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scroll-snap-type: y mandatory;
+
+    scrollbar-width: none;
+
+    overscroll-behavior: none;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+.col-pages::-webkit-scrollbar {
+    display: none;
+}
+
+.col-page {
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+
+    overflow: hidden;
+
+    padding: 20px;
+}
+
+.page-label {
+    position: absolute;
+
+    top: 24px;
+    left: 28px;
+
+    font-size: clamp(13px, 1.6vw, 18px);
+
+    color: rgba(255,255,255,0.4);
+
+    letter-spacing: 2px;
+}
+
+
+/* =========================================================
+   左インジケーター
+========================================================= */
+
+.left-indicator,
+.right-indicator {
+
+    position: absolute;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    z-index: 50;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 9px;
+}
+
+.left-indicator {
+    left: 18px;
+}
+
+.right-indicator {
+    left: 4px;
+}
+
+.scroll-dot {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,0.25);
+
+    transition:
+        background 0.2s,
+        transform 0.2s;
+}
+
+.scroll-dot.active {
+    background: white;
+
+    transform: scale(1.45);
+}
+
+
+/* =========================================================
+   パネル
+========================================================= */
+
+.panel {
+    border-radius: 28px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,0.45);
+
+    border:
+        1px solid rgba(255,255,255,0.14);
+
+    position: relative;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   CLOCK
+========================================================= */
+
+.clock-panel {
+
+    background:
+        radial-gradient(
+            circle at 50% 40%,
+            #232323 0%,
+            #111 70%
+        );
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-direction: column;
+
+    padding:
+        clamp(30px,4vw,50px)
+        clamp(40px,6vw,70px);
+}
+
+.clock-time {
+
+    display: grid;
+
+    grid-template-columns:
+        max-content
+        max-content
+        max-content;
+
+    grid-template-rows:
+        auto
+        auto;
+
+    column-gap: 8px;
+
+    align-items: start;
+
+    line-height: 0.82;
+
+    user-select: none;
+}
+
+.clock-hours,
+.clock-minutes,
+.clock-seconds {
+
+    display: inline-block;
+
+    width: 2ch;
+
+    text-align: center;
+}
+
+.clock-colon {
+
+    display: inline-block;
+
+    width: 0.7ch;
+
+    text-align: center;
+}
+
+.clock-hours {
+
+    grid-column: 1;
+    grid-row: 1;
+
+    font-size:
+        clamp(80px,15vw,220px);
+
+    font-weight: 500;
+
+    letter-spacing: -2px;
+
+    color: #ff493f;
+
+    text-shadow:
+        0 0 18px rgba(255,73,63,0.10);
+}
+
+.clock-colon {
+
+    grid-column: 2;
+    grid-row: 1;
+
+    font-size:
+        clamp(80px,15vw,220px);
+
+    font-weight: 500;
+
+    color: #ffffff;
+
+    line-height: 0.78;
+}
+
+.clock-minutes {
+
+    grid-column: 3;
+    grid-row: 1;
+
+    font-size:
+        clamp(80px,15vw,220px);
+
+    font-weight: 500;
+
+    letter-spacing: -2px;
+
+    color: #aeeeff;
+
+    text-shadow:
+        0 0 18px rgba(174,238,255,0.10);
+}
+
+.clock-seconds {
+
+    grid-column: 3;
+    grid-row: 2;
+
+    justify-self: end;
+
+    margin-top: 10px;
+
+    font-size:
+        clamp(80px,15vw,220px);
+
+    font-weight: 500;
+
+    letter-spacing: -2px;
+
+    color: #e8faff;
+
+    text-shadow:
+        0 0 18px rgba(232,250,255,0.10);
+}
+
+.clock-date {
+
+    margin-top: 22px;
+
+    text-align: center;
+
+    font-size:
+        clamp(16px,2vw,22px);
+
+    font-weight: 400;
+
+    color: rgba(255,255,255,0.6);
+}
+
+
+/* =========================================================
+   WEATHER
+========================================================= */
+
+.right-pages {
+
+    width: 100%;
+    height: 100%;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scroll-snap-type: y mandatory;
+
+    scrollbar-width: none;
+
+    overscroll-behavior: none;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+.right-pages::-webkit-scrollbar {
+    display: none;
+}
+
+.right-page {
+
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   WEATHER CARD
+========================================================= */
+
+.weather-panel {
+
+    width: 100%;
+
+    max-width: 320px;
+
+    height: 440px;
+    min-height: 440px;
+    max-height: 440px;
+
+    padding: 22px 20px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    background:
+        linear-gradient(
+            165deg,
+            #6fb1f0 0%,
+            #3a7fd6 55%,
+            #2e63b0 100%
+        );
+
+    transition:
+        background 0.6s ease;
+
+    flex-shrink: 0;
+}
+
+.weather-top {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+.weather-location {
+
+    font-size: 20px;
+
+    font-weight: 500;
+
+    letter-spacing: 0.2px;
+}
+
+.weather-condition-small {
+
+    font-size: 14px;
+
+    font-weight: 400;
+
+    color:
+        rgba(255,255,255,0.85);
+}
+
+.weather-middle {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 4px;
+
+    margin: 6px 0;
+}
+
+.weather-icon-wrap {
+
+    width: 74px;
+    height: 74px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+}
+
+.weather-icon-wrap svg {
+
+    width: 100%;
+    height: 100%;
+}
+
+.weather-temp {
+
+    font-size: 64px;
+
+    font-weight: 300;
+
+    letter-spacing: -2px;
+
+    line-height: 1;
+}
+
+.weather-bottom {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+.weather-divider {
+
+    height: 1px;
+
+    background:
+        rgba(255,255,255,0.28);
+
+    width: 100%;
+}
+
+.weather-hilo {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    font-size: 15px;
+
+    color:
+        rgba(255,255,255,0.9);
+}
+
+.weather-hilo span.dim {
+
+    color:
+        rgba(255,255,255,0.65);
+}
+
+.weather-extra {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    font-size: 13px;
+
+    color:
+        rgba(255,255,255,0.7);
+}
+
+.weather-updated {
+
+    font-size: 11px;
+
+    color:
+        rgba(255,255,255,0.5);
+
+    text-align: right;
+}
+
+.weather-error {
+
+    font-size: 12px;
+
+    color: #ffdca8;
+
+    background:
+        rgba(0,0,0,0.3);
+
+    border-radius: 10px;
+
+    padding: 8px 10px;
+
+    line-height: 1.5;
+
+    display: none;
+}
+
+.weather-error.show {
+    display: block;
+}
+
+.weather-error a {
+
+    color: #ffe9c2;
+
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   TODO CARD (Google Tasks)
+========================================================= */
+
+.todo-panel {
+
+    width: 100%;
+
+    max-width: 320px;
+
+    height: 440px;
+    min-height: 440px;
+    max-height: 440px;
+
+    padding: 22px 20px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 14px;
+
+    background:
+        linear-gradient(
+            165deg,
+            #232a3d 0%,
+            #171c2b 55%,
+            #0d1019 100%
+        );
+
+    border:
+        1px solid rgba(120,150,255,0.16);
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,0.50),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+
+    flex-shrink: 0;
+
+    overflow: hidden;
+}
+
+.todo-header {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    justify-content: space-between;
+}
+
+.todo-title-group {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+}
+
+.todo-badge {
+
+    width: 26px;
+    height: 26px;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(160deg, #4da3ff 0%, #0a6bdb 100%);
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    box-shadow: 0 2px 8px rgba(10,107,219,0.5);
+}
+
+.todo-badge svg {
+
+    width: 14px;
+    height: 14px;
+}
+
+.todo-title {
+
+    font-size: 19px;
+
+    font-weight: 600;
+
+    letter-spacing: 0.2px;
+
+    color: #f2f5fa;
+}
+
+.todo-signin-btn {
+
+    font-size: 13px;
+
+    font-weight: 500;
+
+    color: #ffffff;
+
+    background:
+        linear-gradient(160deg, #4da3ff 0%, #0a6bdb 100%);
+
+    border: none;
+
+    border-radius: 999px;
+
+    padding: 8px 14px;
+
+    cursor: pointer;
+}
+
+.todo-signin-btn:active {
+    opacity: 0.8;
+}
+
+.todo-account {
+
+    font-size: 12px;
+
+    color: rgba(255,255,255,0.55);
+
+    max-width: 140px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+.todo-list {
+
+    flex: 1;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+    overflow-y: auto;
+
+    scrollbar-width: none;
+
+    padding-right: 2px;
+}
+
+.todo-list::-webkit-scrollbar {
+    display: none;
+}
+
+.todo-divider {
+
+    height: 1px;
+
+    background: rgba(255,255,255,0.12);
+
+    margin: 0 -2px;
+}
+
+.todo-item {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+    font-size: 15px;
+
+    line-height: 1.4;
+
+    color: #e7ebf3;
+
+    cursor: pointer;
+
+    background: rgba(255,255,255,0.045);
+
+    border: 1px solid rgba(255,255,255,0.08);
+
+    border-radius: 14px;
+
+    padding: 12px 12px;
+}
+
+.todo-checkbox {
+
+    width: 21px;
+    height: 21px;
+
+    flex-shrink: 0;
+
+    margin-top: 1px;
+
+    border-radius: 50%;
+
+    border: 2px solid rgba(255,255,255,0.35);
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.todo-checkbox.done {
+
+    background:
+        linear-gradient(160deg, #4da3ff 0%, #0a6bdb 100%);
+
+    border-color: #0a6bdb;
+}
+
+.todo-checkbox.done::after {
+
+    content: "";
+
+    width: 9px;
+    height: 5px;
+
+    border-left: 2px solid #ffffff;
+    border-bottom: 2px solid #ffffff;
+
+    transform: rotate(-45deg) translateY(-1px);
+}
+
+.todo-item-body {
+
+    flex: 1;
+
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+.todo-text {
+
+    font-size: 15px;
+
+    font-weight: 500;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+.todo-text.done {
+
+    color: rgba(255,255,255,0.4);
+
+    text-decoration: line-through;
+}
+
+.todo-notes {
+
+    font-size: 12px;
+
+    line-height: 1.45;
+
+    color: rgba(255,255,255,0.55);
+
+    word-break: break-word;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.todo-notes.done {
+    color: rgba(255,255,255,0.3);
+}
+
+.todo-due {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 4px;
+
+    align-self: flex-start;
+
+    font-size: 11px;
+
+    font-weight: 500;
+
+    color: #bcd8ff;
+
+    background: rgba(77,163,255,0.16);
+
+    border: 1px solid rgba(77,163,255,0.3);
+
+    border-radius: 999px;
+
+    padding: 3px 9px;
+
+    margin-top: 1px;
+}
+
+.todo-due.done {
+
+    color: rgba(255,255,255,0.4);
+
+    background: rgba(255,255,255,0.06);
+
+    border-color: rgba(255,255,255,0.1);
+}
+
+.todo-empty,
+.todo-status {
+
+    font-size: 13px;
+
+    color: rgba(255,255,255,0.55);
+
+    text-align: center;
+
+    margin: auto 0;
+
+    line-height: 1.6;
+}
+
+.todo-footer {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    font-size: 11px;
+
+    color: rgba(255,255,255,0.5);
+}
+
+.todo-refresh-btn {
+
+    font-size: 11px;
+
+    color: rgba(255,255,255,0.75);
+
+    background: rgba(255,255,255,0.12);
+
+    border: none;
+
+    border-radius: 999px;
+
+    padding: 5px 10px;
+
+    cursor: pointer;
+}
+
+.todo-refresh-btn:active {
+    opacity: 0.7;
+}
+
+
+/* =========================================================
+   KEEP CARD (Google Keep)
+========================================================= */
+
+.keep-panel {
+
+    width: 100%;
+
+    max-width: 320px;
+
+    height: 440px;
+    min-height: 440px;
+    max-height: 440px;
+
+    padding: 22px 20px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 14px;
+
+    background:
+        linear-gradient(
+            165deg,
+            #262110 0%,
+            #1a1608 55%,
+            #100d04 100%
+        );
+
+    border:
+        1px solid rgba(255,214,64,0.18);
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,0.50),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+
+    flex-shrink: 0;
+
+    overflow: hidden;
+}
+
+.keep-badge {
+
+    width: 26px;
+    height: 26px;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(160deg, #ffe066 0%, #f2b807 100%);
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    box-shadow: 0 2px 8px rgba(242,184,7,0.45);
+}
+
+.keep-badge svg {
+
+    width: 15px;
+    height: 15px;
+}
+
+.keep-signin-btn {
+
+    font-size: 13px;
+
+    font-weight: 500;
+
+    color: #2b2107;
+
+    background:
+        linear-gradient(160deg, #ffe066 0%, #f2b807 100%);
+
+    border: none;
+
+    border-radius: 999px;
+
+    padding: 8px 14px;
+
+    cursor: pointer;
+}
+
+.keep-signin-btn:active {
+    opacity: 0.8;
+}
+
+.keep-count-badge {
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    color: #2b2107;
+
+    background:
+        linear-gradient(160deg, #ffe066 0%, #f2b807 100%);
+
+    border-radius: 999px;
+
+    padding: 4px 11px;
+}
+
+.keep-body {
+
+    flex: 1;
+
+    display: flex;
+
+    flex-direction: column;
+
+    min-height: 0;
+}
+
+.keep-note {
+
+    flex: 1;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+    background: rgba(255,224,102,0.07);
+
+    border: 1px solid rgba(255,224,102,0.16);
+
+    border-radius: 16px;
+
+    padding: 16px;
+
+    overflow: hidden;
+}
+
+.keep-note-title {
+
+    font-size: 17px;
+
+    font-weight: 600;
+
+    color: #ffe9a8;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+.keep-note-body {
+
+    flex: 1;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+
+    color: rgba(255,240,200,0.75);
+
+    white-space: pre-wrap;
+
+    overflow: hidden;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 9;
+    -webkit-box-orient: vertical;
+}
+
+.keep-note-time {
+
+    font-size: 11px;
+
+    color: rgba(255,224,102,0.5);
+}
+
+
+/* =========================================================
+   TIMER
+========================================================= */
+
+.timer-content {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap:
+        clamp(24px,4vw,40px);
+}
+
+.timer-time-display {
+
+    display: flex;
+
+    gap: 8px;
+
+    align-items: flex-start;
+
+    line-height: 0.82;
+
+    user-select: none;
+}
+
+.timer-time-display.hidden {
+    display: none !important;
+}
+
+.timer-hours-display,
+.timer-minutes-display,
+.timer-seconds-display {
+
+    font-size:
+        clamp(70px,13vw,170px);
+
+    font-weight: 500;
+
+    width: 2ch;
+
+    text-align: center;
+}
+
+.timer-hours-display {
+
+    color: #ff493f;
+
+    text-shadow:
+        0 0 18px rgba(255,73,63,0.10);
+}
+
+.timer-minutes-display {
+
+    color: #aeeeff;
+
+    text-shadow:
+        0 0 18px rgba(174,238,255,0.10);
+}
+
+.timer-seconds-display {
+
+    color: #e8faff;
+
+    text-shadow:
+        0 0 18px rgba(232,250,255,0.10);
+}
+
+.timer-colon-display,
+.timer-colon2-display {
+
+    font-size:
+        clamp(70px,13vw,170px);
+
+    font-weight: 500;
+
+    color: white;
+
+    width: 0.7ch;
+
+    text-align: center;
+}
+
+.time-picker {
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    user-select: none;
+
+    overflow: hidden;
+
+    padding: 15px 20px;
+
+    border-radius: 28px;
+
+    background:
+        rgba(255,255,255,0.06);
+
+    border:
+        1px solid rgba(255,255,255,0.14);
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,0.25);
+
+    flex-shrink: 0;
+}
+
+.time-column {
+
+    position: relative;
+
+    width:
+        clamp(60px,8vw,100px);
+
+    height: 180px;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scroll-snap-type: y mandatory;
+
+    scrollbar-width: none;
+
+    flex:
+        0 0 clamp(60px,8vw,100px);
+
+    user-select: none;
+
+    touch-action: pan-y;
+}
+
+.time-column::-webkit-scrollbar {
+    display: none;
+}
+
+.wheel-spacer {
+
+    height: 65px;
+
+    flex-shrink: 0;
+}
+
+.time-value {
+
+    width: 100%;
+
+    height: 50px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    scroll-snap-align: center;
+
+    font-size:
+        clamp(26px,4vw,44px);
+
+    color:
+        rgba(255,255,255,0.28);
+
+    transition:
+        color 0.15s,
+        transform 0.15s;
+
+    flex-shrink: 0;
+}
+
+.time-value.selected {
+
+    color: #ffffff;
+
+    transform: scale(1.15);
+
+    font-weight: 500;
+
+    text-shadow:
+        0 0 18px rgba(110,180,255,0.5);
+}
+
+.time-separator {
+
+    font-size:
+        clamp(28px,4vw,44px);
+
+    color: #9cc9ff;
+
+    text-shadow:
+        0 0 12px rgba(80,150,255,0.45);
+}
+
+.time-picker::before,
+.time-picker::after {
+
+    content: "";
+
+    position: absolute;
+
+    left: 18px;
+    right: 18px;
+
+    height: 1px;
+
+    background:
+        rgba(150,200,255,0.45);
+
+    pointer-events: none;
+
+    z-index: 5;
+}
+
+.time-picker::before {
+    top: calc(50% - 25px);
+}
+
+.time-picker::after {
+    top: calc(50% + 25px);
+}
+
+.timer-page.running .time-picker {
+    display: none !important;
+}
+
+.tool-buttons {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+.tool-button {
+
+    min-width: 120px;
+
+    padding: 13px 25px;
+
+    border: none;
+
+    border-radius: 30px;
+
+    background:
+        rgba(255,255,255,0.12);
+
+    color: white;
+
+    font-size: 17px;
+
+    cursor: pointer;
+
+    border:
+        1px solid rgba(255,255,255,0.14);
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,0.15);
+}
+
+.tool-button:active {
+    transform: scale(0.96);
+}
+
+.start-button {
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff6f65,
+            #ff493f
+        );
+
+    box-shadow:
+        0 8px 25px rgba(255,73,63,0.28);
+}
+
+.cancel-button {
+
+    background:
+        rgba(255,255,255,0.09);
+}
+
+
+/* =========================================================
+   MEDIA
+   カードサイズ固定
+========================================================= */
+
+.media-panel {
+
+    width: 100%;
+
+    max-width: 320px;
+
+    /*
+       ここを固定。
+       画像サイズによってカードが伸び縮みしない。
+    */
+    height: 440px;
+    min-height: 440px;
+    max-height: 440px;
+
+    padding: 22px 20px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: flex-start;
+
+    gap: 0;
+
+    background:
+        linear-gradient(
+            165deg,
+            #287a49 0%,
+            #155c35 22%,
+            #0d3923 58%,
+            #092519 100%
+        );
+
+    border:
+        1px solid rgba(120,210,155,0.18);
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,0.50),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+
+    /*
+       子要素のサイズ変更で
+       カード自体が変化しないようにする
+    */
+    flex-shrink: 0;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   TRAIN CARD (学研都市線)
+========================================================= */
+
+.train-panel {
+
+    width: 100%;
+
+    max-width: 320px;
+
+    height: 440px;
+    min-height: 440px;
+    max-height: 440px;
+
+    padding: 22px 20px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: flex-start;
+
+    gap: 14px;
+
+    background:
+        linear-gradient(
+            165deg,
+            #4a4f8f 0%,
+            #33366b 45%,
+            #1f2140 100%
+        );
+
+    border:
+        1px solid rgba(160,170,255,0.16);
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,0.50),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+
+    flex-shrink: 0;
+
+    overflow: hidden;
+}
+
+.train-header {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+.train-title {
+
+    font-size: 22px;
+
+    font-weight: 500;
+
+    letter-spacing: 3px;
+
+    color: white;
+
+    line-height: 1.1;
+}
+
+.train-line {
+
+    font-size: 13px;
+
+    color:
+        rgba(255,255,255,0.65);
+}
+
+.train-next {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 4px;
+
+    padding: 18px 0;
+
+    border-radius: 20px;
+
+    background:
+        rgba(255,255,255,0.06);
+}
+
+.train-next-label {
+
+    font-size: 13px;
+
+    color:
+        rgba(255,255,255,0.65);
+}
+
+.train-next-countdown {
+
+    font-size: 44px;
+
+    font-weight: 600;
+
+    line-height: 1;
+
+    color: #ffffff;
+}
+
+.train-next-time {
+
+    font-size: 14px;
+
+    color:
+        rgba(255,255,255,0.75);
+}
+
+.train-upcoming {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+.train-upcoming-row {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    font-size: 15px;
+
+    color:
+        rgba(255,255,255,0.85);
+
+    padding: 8px 12px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(255,255,255,0.05);
+}
+
+.train-upcoming-row .dim {
+
+    color:
+        rgba(255,255,255,0.5);
+
+    font-size: 12px;
+
+    margin-left: 6px;
+}
+
+.train-delay {
+
+    margin-top: auto;
+
+    font-size: 12px;
+
+    line-height: 1.4;
+
+    padding: 10px 12px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(255,255,255,0.05);
+
+    color:
+        rgba(255,255,255,0.7);
+}
+
+.train-delay.has-delay {
+
+    background:
+        rgba(255,120,120,0.18);
+
+    color: #ffd9d9;
+}
+
+
+/* =========================================================
+   MEDIA HEADER
+========================================================= */
+
+.media-header {
+
+    width: 100%;
+
+    height: 39px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 2px;
+
+    flex-shrink: 0;
+
+    overflow: hidden;
+}
+
+.media-title {
+
+    font-size: 22px;
+
+    font-weight: 500;
+
+    letter-spacing: 3px;
+
+    color: white;
+
+    line-height: 1.1;
+}
+
+.media-status {
+
+    font-size: 13px;
+
+    color:
+        rgba(255,255,255,0.65);
+
+    line-height: 1.1;
+}
+
+
+/* =========================================================
+   ジャケット
+   完全固定サイズ
+========================================================= */
+
+.media-art {
+
+    /*
+       カード幅に対して固定。
+       aspect-ratioだけに任せない。
+    */
+
+    width: 250px;
+    height: 250px;
+
+    min-width: 250px;
+    min-height: 250px;
+
+    max-width: 250px;
+    max-height: 250px;
+
+    margin-top: 18px;
+
+    border-radius: 20px;
+
+    flex:
+        0 0 250px;
+
+    position: relative;
+
+    overflow: hidden;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,0.10),
+            rgba(0,0,0,0.20)
+        );
+
+    /*
+       background-imageは
+       画像そのもののサイズでは
+       要素サイズを変えない。
+    */
+    background-size: cover;
+
+    background-position: center;
+
+    background-repeat: no-repeat;
+
+    border:
+        1px solid rgba(255,255,255,0.20);
+
+    box-shadow:
+        0 15px 35px rgba(0,0,0,0.30),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+
+/* =========================================================
+   ジャケット未接続時
+========================================================= */
+
+.media-art::before {
+
+    content: "";
+
+    width: 48px;
+    height: 48px;
+
+    border-radius: 50%;
+
+    border:
+        2px solid rgba(255,255,255,0.45);
+
+    position: absolute;
+
+    pointer-events: none;
+}
+
+.media-art::after {
+
+    content: "";
+
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,0.55);
+
+    position: absolute;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   ジャケット取得時
+========================================================= */
+
+.media-art.has-art::before,
+.media-art.has-art::after {
+
+    display: none;
+}
+
+
+/* =========================================================
+   曲情報
+========================================================= */
+
+.media-info {
+
+    width: 100%;
+
+    height: 42px;
+
+    margin-top: 14px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 3px;
+
+    min-width: 0;
+
+    flex-shrink: 0;
+
+    text-align: center;
+
+    overflow: hidden;
+}
+
+.media-song-title {
+
+    width: 100%;
+
+    font-size: 16px;
+
+    font-weight: 500;
+
+    color: #ffffff;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    line-height: 1.2;
+}
+
+.media-artist {
+
+    width: 100%;
+
+    font-size: 12px;
+
+    color:
+        rgba(210,240,220,0.62);
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    line-height: 1.2;
+}
+
+
+/* =========================================================
+   メディア操作ボタン
+========================================================= */
+
+.media-buttons {
+
+    width: 100%;
+
+    height: 54px;
+
+    margin-top: 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 14px;
+
+    flex-shrink: 0;
+}
+
+.media-button {
+
+    width: 44px;
+    height: 44px;
+
+    flex:
+        0 0 44px;
+
+    padding: 0;
+
+    border: none;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background:
+        rgba(255,255,255,0.10);
+
+    color:
+        rgba(255,255,255,0.90);
+
+    border:
+        1px solid rgba(255,255,255,0.13);
+
+    cursor: pointer;
+
+    box-shadow:
+        0 7px 18px rgba(0,0,0,0.20);
+
+    transition:
+        transform 0.12s ease,
+        background 0.15s ease;
+}
+
+.media-button svg {
+
+    width: 18px;
+    height: 18px;
+
+    display: block;
+
+    fill: currentColor;
+}
+
+.media-button:hover {
+
+    background:
+        rgba(255,255,255,0.16);
+}
+
+.media-button:active {
+
+    transform: scale(0.90);
+}
+
+
+/* =========================================================
+   再生ボタン
+========================================================= */
+
+.media-button.media-play {
+
+    width: 54px;
+    height: 54px;
+
+    flex:
+        0 0 54px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #effff4 0%,
+            #c9ecd6 100%
+        );
+
+    color: #145c32;
+
+    border:
+        1px solid rgba(255,255,255,0.28);
+
+    box-shadow:
+        0 9px 24px rgba(0,0,0,0.25);
+}
+
+.media-button.media-play svg {
+
+    width: 21px;
+    height: 21px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .dashboard {
+        flex-direction: column;
+    }
+
+    .right-col {
+        flex: 1 1 auto;
+    }
+}
+
+
+/* =========================================================
+   1280x720など
+========================================================= */
+
+@media (min-width: 1000px)
+       and (max-width: 1366px)
+       and (max-height: 800px) {
+
+    .clock-panel {
+
+        padding:
+            40px 56px;
+    }
+
+    .clock-hours,
+    .clock-colon,
+    .clock-minutes,
+    .clock-seconds {
+
+        font-size: 190px;
+
+        letter-spacing: -3px;
+    }
+
+    .clock-date {
+
+        margin-top: 18px;
+
+        font-size: 19px;
+    }
+
+    .timer-hours-display,
+    .timer-minutes-display,
+    .timer-seconds-display,
+    .timer-colon-display,
+    .timer-colon2-display {
+
+        font-size: 150px;
+    }
+
+    .weather-panel,
+    .media-panel {
+
+        max-width: 280px;
+
+        height: 440px;
+        min-height: 440px;
+        max-height: 440px;
+    }
+
+    .weather-temp {
+        font-size: 58px;
+    }
+
+    /*
+       1280x720でもジャケット固定。
+       カード幅が280pxになるので、
+       内側に収まるサイズへ変更。
+    */
+
+    .media-art {
+
+        width: 220px;
+        height: 220px;
+
+        min-width: 220px;
+        min-height: 220px;
+
+        max-width: 220px;
+        max-height: 220px;
+
+        flex:
+            0 0 220px;
+    }
+
+    .media-buttons {
+        margin-top: 14px;
+    }
+}
+</style>
+</head>
+<body>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<title>DesktopThing</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600&family=M+PLUS+Rounded+1c:wght@300;400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <!-- 左：時計・タイマー -->
+    <div class="col left-col">
+
+        <div class="col-pages" id="leftPages">
+
+            <!-- CLOCK -->
+            <section class="col-page">
+
+                <div class="panel clock-panel">
+
+                    <div class="clock-time">
+
+                        <div class="clock-hours rounded-num" id="clockHours">00</div>
+
+                        <div class="clock-colon rounded-num">:</div>
+
+                        <div class="clock-minutes rounded-num" id="clockMinutes">00</div>
+
+                        <div class="clock-seconds rounded-num" id="clockSeconds">00</div>
+
+                    </div>
+
+                    <div class="clock-date" id="clockDate">
+                        Friday, August 21
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- TIMER -->
+            <section class="col-page timer-page" id="timerPage">
+
+                <div class="page-label">TIMER</div>
+
+                <div class="timer-content">
+
+                    <div class="timer-time-display hidden" id="timerTimeDisplay">
+
+                        <div class="timer-hours-display rounded-num" id="timerHoursDisplay">
+                            00
+                        </div>
+
+                        <div class="timer-colon-display rounded-num">:</div>
+
+                        <div class="timer-minutes-display rounded-num" id="timerMinutesDisplay">
+                            00
+                        </div>
+
+                        <div class="timer-colon2-display rounded-num">:</div>
+
+                        <div class="timer-seconds-display rounded-num" id="timerSecondsDisplay">
+                            00
+                        </div>
+
+                    </div>
+
+
+                    <div class="time-picker" id="timePicker">
+
+                        <div class="time-column" id="timerHours"></div>
+
+                        <div class="time-separator">:</div>
+
+                        <div class="time-column" id="timerMinutes"></div>
+
+                        <div class="time-separator">:</div>
+
+                        <div class="time-column" id="timerSeconds"></div>
+
+                    </div>
+
+
+                    <div class="tool-buttons">
+
+                        <button class="tool-button cancel-button" id="timerCancel">
+                            RESET
+                        </button>
+
+                        <button class="tool-button start-button" id="timerStart">
+                            START
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <!-- 時計・タイマーの白丸 -->
+        <div class="left-indicator" id="leftIndicator">
+
+            <div class="scroll-dot active" data-index="0"></div>
+            <div class="scroll-dot" data-index="1"></div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- 右：天気・メディア -->
+    <div class="col right-col">
+
+        <div class="right-pages" id="rightPages">
+
+
+            <!-- ==============================
+                 WEATHER
+            =============================== -->
+
+            <section class="right-page">
+
+                <div class="panel weather-panel" id="weatherPanel">
+
+                    <div class="weather-top">
+
+                        <div class="weather-location">
+                            交野市
+                        </div>
+
+                        <div class="weather-condition-small" id="weatherConditionSmall">
+                            読み込み中…
+                        </div>
+
+                    </div>
+
+
+                    <div class="weather-middle">
+
+                        <div class="weather-icon-wrap" id="weatherIconWrap"></div>
+
+                        <div class="weather-temp rounded-num" id="weatherTemp">
+                            --°
+                        </div>
+
+                    </div>
+
+
+                    <div class="weather-bottom">
+
+                        <div class="weather-error" id="weatherError"></div>
+
+                        <div class="weather-divider"></div>
+
+                        <div class="weather-hilo">
+
+                            <span>
+                                <span class="dim">最高</span>
+                                <span id="weatherHigh">--°</span>
+                            </span>
+
+                            <span>
+                                <span class="dim">最低</span>
+                                <span id="weatherLow">--°</span>
+                            </span>
+
+                        </div>
+
+
+                        <div class="weather-extra">
+
+                            <span>
+                                湿度
+                                <span id="weatherHumidity">--%</span>
+                            </span>
+
+                            <span>
+                                体感
+                                <span id="weatherFeels">--°</span>
+                            </span>
+
+                        </div>
+
+
+                        <div class="weather-updated" id="weatherUpdated"></div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ==============================
+                 TODO (Google Tasks)
+            =============================== -->
+
+            <section class="right-page">
+
+                <div class="panel todo-panel" id="todoPanel">
+
+                    <div class="todo-header">
+
+                        <div class="todo-title-group">
+
+                            <div class="todo-badge">
+                                <svg viewBox="0 0 24 24" fill="none">
+                                    <path d="M5 13l4 4 10-10" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+
+                            <div class="todo-title">TODO</div>
+
+                        </div>
+
+                        <button
+                            class="todo-signin-btn"
+                            id="todoSignInBtn"
+                            onclick="todoSignIn()"
+                        >
+                            サインイン
+                        </button>
+
+                        <div
+                            class="todo-account"
+                            id="todoAccount"
+                            style="display: none;"
+                        ></div>
+
+                    </div>
+
+                    <div class="todo-divider"></div>
+
+
+                    <div class="todo-list" id="todoList">
+
+                        <div class="todo-status" id="todoStatus">
+                            Googleでサインインすると<br>タスクが表示されるよ
+                        </div>
+
+                    </div>
+
+
+                    <div class="todo-footer">
+
+                        <span id="todoUpdated"></span>
+
+                        <button
+                            class="todo-refresh-btn"
+                            id="todoRefreshBtn"
+                            onclick="todoRefresh()"
+                            style="display: none;"
+                        >
+                            更新
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ==============================
+                 KEEP (Google Keep)
+            =============================== -->
+
+            <section class="right-page">
+
+                <div class="panel keep-panel" id="keepPanel">
+
+                    <div class="todo-header">
+
+                        <div class="todo-title-group">
+
+                            <div class="keep-badge">
+                                <svg viewBox="0 0 24 24" fill="none">
+                                    <path d="M12 2.25c-3.45 0-6.25 2.72-6.25 6.08 0 2.22 1.2 4.05 2.9 5.22.58.4.95.94 1.05 1.7h4.6c.1-.76.47-1.3 1.05-1.7 1.7-1.17 2.9-3 2.9-5.22C18.25 4.97 15.45 2.25 12 2.25Zm-2.3 13.8v1.15h4.6v-1.15H9.7Zm.35 2.05v.7c0 .82.66 1.48 1.48 1.48h.94c.82 0 1.48-.66 1.48-1.48v-.7h-3.9Z" fill="#ffffff"/>
+                                </svg>
+                            </div>
+
+                            <div class="todo-title">KEEP</div>
+
+                        </div>
+
+                        <button
+                            class="keep-signin-btn"
+                            id="keepSignInBtn"
+                            onclick="keepSignIn()"
+                        >
+                            サインイン
+                        </button>
+
+                        <div
+                            class="keep-count-badge"
+                            id="keepCountBadge"
+                            style="display: none;"
+                        ></div>
+
+                    </div>
+
+                    <div class="todo-divider"></div>
+
+
+                    <div class="keep-body" id="keepBody">
+
+                        <div class="todo-status" id="keepStatus">
+                            Googleでサインインすると<br>メモが表示されるよ
+                        </div>
+
+                    </div>
+
+
+                    <div class="todo-footer">
+
+                        <span id="keepUpdated"></span>
+
+                        <button
+                            class="todo-refresh-btn"
+                            id="keepRefreshBtn"
+                            onclick="keepRefresh()"
+                            style="display: none;"
+                        >
+                            更新
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ==============================
+                 TRAIN (学研都市線 星田駅 京橋方面)
+                 ※右側は天気のみ表示のため一旦非表示
+            =============================== -->
+
+            <section class="right-page" style="display: none;">
+
+                <div class="panel train-panel" id="trainPanel">
+
+                    <div class="train-header">
+
+                        <div class="train-title">
+                            TRAIN
+                        </div>
+
+                        <div class="train-line">
+                            学研都市線 星田 → 京橋方面
+                        </div>
+
+                    </div>
+
+
+                    <div class="train-next" id="trainNext">
+
+                        <div class="train-next-label">
+                            次の電車まで
+                        </div>
+
+                        <div class="train-next-countdown rounded-num" id="trainCountdown">
+                            --分
+                        </div>
+
+                        <div class="train-next-time" id="trainNextTime">
+                            --:--
+                        </div>
+
+                    </div>
+
+
+                    <div class="train-upcoming" id="trainUpcoming"></div>
+
+
+                    <div class="train-delay" id="trainDelay">
+                        運行情報を確認中…
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ==============================
+                 MEDIA CONTROL
+            =============================== -->
+
+            <section class="right-page">
+
+                <div class="panel media-panel">
+
+                    <!-- MEDIA：カード左上 -->
+                    <div class="media-header">
+
+                        <div class="media-title">
+                            MEDIA
+                        </div>
+
+                        <div class="media-status" id="mediaStatus">
+                            Windows
+                        </div>
+
+                    </div>
+
+
+                    <!-- ジャケット枠 -->
+                    <div class="media-art" id="mediaArt">
+                    </div>
+
+
+                    <!-- 曲情報 -->
+                    <div class="media-info">
+
+                        <div class="media-song-title" id="mediaSongTitle">
+                            再生中のメディア
+                        </div>
+
+                        <div class="media-artist" id="mediaArtist">
+                            Windows
+                        </div>
+
+                    </div>
+
+
+                    <!-- メディア操作 -->
+                    <div class="media-buttons">
+
+                        <!-- 前の曲 -->
+                        <button
+                            class="media-button"
+                            aria-label="前の曲"
+                            onclick="mediaSend('PREV')">
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true">
+
+                                <path d="
+                                    M6 5
+                                    v14
+                                    h2
+                                    V5
+                                    H6
+                                    Z
+
+                                    M20 6
+                                    L9 12
+                                    l11 6
+                                    V6
+                                    Z
+                                "/>
+
+                            </svg>
+
+                        </button>
+
+
+                        <!-- 再生 -->
+                        <button
+                            class="media-button media-play"
+                            aria-label="再生・一時停止"
+                            onclick="mediaSend('PLAY')">
+
+                            <svg
+                                class="play-icon"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true">
+
+                                <path d="
+                                    M8 5
+                                    v14
+                                    l11-7
+                                    Z
+                                "/>
+
+                            </svg>
+
+                        </button>
+
+
+                        <!-- 次の曲 -->
+                        <button
+                            class="media-button"
+                            aria-label="次の曲"
+                            onclick="mediaSend('NEXT')">
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true">
+
+                                <path d="
+                                    M16 5
+                                    v14
+                                    h2
+                                    V5
+                                    h-2
+                                    Z
+
+                                    M4 6
+                                    v12
+                                    l11-6
+                                    L4 6
+                                    Z
+                                "/>
+
+                            </svg>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+
+        <!-- 天気・メディアの白丸 -->
+        <div class="right-indicator" id="rightIndicator">
+
+            <div class="scroll-dot active" data-index="0"></div>
+            <div class="scroll-dot" data-index="1"></div>
+            <div class="scroll-dot" data-index="2"></div>
+            <div class="scroll-dot" data-index="3"></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
+<script>
+/* =========================================================
+   CLOCK
+========================================================= */
+
+function updateClock() {
+
+    const now = new Date();
+
+    document.getElementById("clockHours").textContent =
+        String(now.getHours()).padStart(2, "0");
+
+    document.getElementById("clockMinutes").textContent =
+        String(now.getMinutes()).padStart(2, "0");
+
+    document.getElementById("clockSeconds").textContent =
+        String(now.getSeconds()).padStart(2, "0");
+
+    const weekdays = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+    ];
+
+    const months = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+    ];
+
+    document.getElementById("clockDate").textContent =
+        weekdays[now.getDay()] +
+        ", " +
+        months[now.getMonth()] +
+        " " +
+        now.getDate();
+}
+
+updateClock();
+
+setInterval(updateClock, 1000);
+
+
+/* =========================================================
+   TIMER
+========================================================= */
+
+function createWheel(id, max) {
+
+    const column = document.getElementById(id);
+
+    const topSpacer = document.createElement("div");
+    topSpacer.className = "wheel-spacer";
+    column.appendChild(topSpacer);
+
+    for (let i = 0; i <= max; i++) {
+
+        const value = document.createElement("div");
+
+        value.className =
+            "time-value rounded-num";
+
+        value.textContent =
+            String(i).padStart(2, "0");
+
+        column.appendChild(value);
+    }
+
+    const bottomSpacer = document.createElement("div");
+    bottomSpacer.className = "wheel-spacer";
+    column.appendChild(bottomSpacer);
+}
+
+
+createWheel("timerHours", 23);
+createWheel("timerMinutes", 59);
+createWheel("timerSeconds", 59);
+
+
+function getSelectedIndex(column) {
+
+    const values =
+        column.querySelectorAll(".time-value");
+
+    const count = values.length;
+
+    if (count === 0) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        Math.min(
+            count - 1,
+            Math.round(column.scrollTop / 50)
+        )
+    );
+}
+
+
+function updateSelected(column) {
+
+    const values =
+        column.querySelectorAll(".time-value");
+
+    const index =
+        getSelectedIndex(column);
+
+    values.forEach((value, i) => {
+
+        value.classList.toggle(
+            "selected",
+            i === index
+        );
+
+    });
+}
+
+
+document.querySelectorAll(".time-column").forEach(
+    column => {
+
+        let scrollTimer;
+
+        column.addEventListener(
+            "scroll",
+            () => {
+
+                if (column.scrollLeft !== 0) {
+                    column.scrollLeft = 0;
+                }
+
+                updateSelected(column);
+
+                clearTimeout(scrollTimer);
+
+                scrollTimer =
+                    setTimeout(() => {
+
+                        const index =
+                            getSelectedIndex(column);
+
+                        column.scrollTo({
+                            top: index * 50,
+                            behavior: "smooth"
+                        });
+
+                        updateSelected(column);
+
+                    }, 100);
+
+            },
+            { passive: true }
+        );
+
+        column.scrollLeft = 0;
+        column.scrollTop = 0;
+
+        updateSelected(column);
+    }
+);
+
+
+const timerPage =
+    document.getElementById("timerPage");
+
+const timerStart =
+    document.getElementById("timerStart");
+
+const timerCancel =
+    document.getElementById("timerCancel");
+
+const timerTimeDisplay =
+    document.getElementById("timerTimeDisplay");
+
+
+let timerSeconds = 0;
+let timerInterval = null;
+let timerRunning = false;
+
+
+function getTimerSelectedTime() {
+
+    const hours =
+        getSelectedIndex(
+            document.getElementById("timerHours")
+        );
+
+    const minutes =
+        getSelectedIndex(
+            document.getElementById("timerMinutes")
+        );
+
+    const seconds =
+        getSelectedIndex(
+            document.getElementById("timerSeconds")
+        );
+
+    return (
+        hours * 3600 +
+        minutes * 60 +
+        seconds
+    );
+}
+
+
+function updateTimerDisplay() {
+
+    const hours =
+        Math.floor(timerSeconds / 3600);
+
+    const minutes =
+        Math.floor(
+            (timerSeconds % 3600) / 60
+        );
+
+    const seconds =
+        timerSeconds % 60;
+
+    document.getElementById(
+        "timerHoursDisplay"
+    ).textContent =
+        String(hours).padStart(2, "0");
+
+    document.getElementById(
+        "timerMinutesDisplay"
+    ).textContent =
+        String(minutes).padStart(2, "0");
+
+    document.getElementById(
+        "timerSecondsDisplay"
+    ).textContent =
+        String(seconds).padStart(2, "0");
+}
+
+
+function playTimerSound() {
+
+    try {
+
+        const AudioCtx =
+            window.AudioContext ||
+            window.webkitAudioContext;
+
+        const ctx =
+            new AudioCtx();
+
+        const setIntervalTime = 2.0;
+        const setCount = 4;
+
+        const beepOffsets = [
+            0,
+            0.3,
+            0.6
+        ];
+
+        for (
+            let s = 0;
+            s < setCount;
+            s++
+        ) {
+
+            const setStart =
+                s * setIntervalTime;
+
+            beepOffsets.forEach(
+                (t, i) => {
+
+                    const osc =
+                        ctx.createOscillator();
+
+                    const gain =
+                        ctx.createGain();
+
+                    osc.type = "sine";
+
+                    osc.frequency.value =
+                        i === 2
+                            ? 1046.5
+                            : 880;
+
+                    const startTime =
+                        ctx.currentTime +
+                        setStart +
+                        t;
+
+                    gain.gain.setValueAtTime(
+                        0.0001,
+                        startTime
+                    );
+
+                    gain.gain
+                        .exponentialRampToValueAtTime(
+                            0.35,
+                            startTime + 0.02
+                        );
+
+                    gain.gain
+                        .exponentialRampToValueAtTime(
+                            0.0001,
+                            startTime + 0.28
+                        );
+
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+
+                    osc.start(startTime);
+
+                    osc.stop(
+                        startTime + 0.3
+                    );
+                }
+            );
+        }
+
+        setTimeout(
+            () => {
+
+                try {
+                    ctx.close();
+                } catch (e) {}
+
+            },
+            (setCount * setIntervalTime + 1) * 1000
+        );
+
+    } catch (e) {}
+}
+
+
+timerStart.addEventListener(
+    "click",
+    () => {
+
+        if (timerRunning) {
+
+            clearInterval(timerInterval);
+
+            timerRunning = false;
+
+            timerStart.textContent =
+                "RESUME";
+
+            return;
+        }
+
+        if (timerSeconds === 0) {
+
+            timerSeconds =
+                getTimerSelectedTime();
+
+            if (timerSeconds <= 0) {
+                return;
+            }
+        }
+
+        timerRunning = true;
+
+        timerPage.classList.add(
+            "running"
+        );
+
+        timerTimeDisplay.classList.remove(
+            "hidden"
+        );
+
+        timerStart.textContent =
+            "PAUSE";
+
+        updateTimerDisplay();
+
+        timerInterval =
+            setInterval(
+                () => {
+
+                    timerSeconds--;
+
+                    updateTimerDisplay();
+
+                    if (timerSeconds <= 0) {
+
+                        clearInterval(
+                            timerInterval
+                        );
+
+                        timerInterval = null;
+
+                        timerRunning = false;
+
+                        timerSeconds = 0;
+
+                        updateTimerDisplay();
+
+                        timerStart.textContent =
+                            "START";
+
+                        playTimerSound();
+                    }
+
+                },
+                1000
+            );
+    }
+);
+
+
+timerCancel.addEventListener(
+    "click",
+    () => {
+
+        clearInterval(timerInterval);
+
+        timerInterval = null;
+        timerRunning = false;
+        timerSeconds = 0;
+
+        timerPage.classList.remove(
+            "running"
+        );
+
+        timerTimeDisplay.classList.add(
+            "hidden"
+        );
+
+        timerStart.textContent =
+            "START";
+
+        updateTimerDisplay();
+
+        document
+            .querySelectorAll(
+                "#timerPage .time-column"
+            )
+            .forEach(
+                column => {
+
+                    column.scrollTo({
+                        top: 0,
+                        behavior: "smooth"
+                    });
+
+                    column.scrollLeft = 0;
+
+                    updateSelected(column);
+                }
+            );
+    }
+);
+
+
+/* =========================================================
+   左側 時計 ⇔ タイマー
+========================================================= */
+
+function bindColumnIndicator(
+    pagesId,
+    indicatorId
+) {
+
+    const pagesEl =
+        document.getElementById(pagesId);
+
+    const dots =
+        document.querySelectorAll(
+            "#" +
+            indicatorId +
+            " .scroll-dot"
+        );
+
+    const pageEls =
+        pagesEl.querySelectorAll(
+            ".col-page"
+        );
+
+    function update() {
+
+        const scrollTop =
+            pagesEl.scrollTop;
+
+        const pageHeight =
+            pagesEl.clientHeight;
+
+        if (pageHeight <= 0) {
+            return;
+        }
+
+        let index =
+            Math.round(
+                scrollTop / pageHeight
+            );
+
+        index =
+            Math.max(
+                0,
+                Math.min(
+                    pageEls.length - 1,
+                    index
+                )
+            );
+
+        dots.forEach(
+            (dot, i) => {
+
+                dot.classList.toggle(
+                    "active",
+                    i === index
+                );
+            }
+        );
+    }
+
+    pagesEl.addEventListener(
+        "scroll",
+        update,
+        { passive: true }
+    );
+
+    update();
+}
+
+
+bindColumnIndicator(
+    "leftPages",
+    "leftIndicator"
+);
+
+
+/* =========================================================
+   右側 天気 ⇔ メディア
+========================================================= */
+
+function bindRightIndicator() {
+
+    const pages =
+        document.getElementById(
+            "rightPages"
+        );
+
+    const dots =
+        document.querySelectorAll(
+            "#rightIndicator .scroll-dot"
+        );
+
+    function update() {
+
+        const pageHeight =
+            pages.clientHeight;
+
+        if (pageHeight <= 0) {
+            return;
+        }
+
+        let index =
+            Math.round(
+                pages.scrollTop /
+                pageHeight
+            );
+
+        index =
+            Math.max(
+                0,
+                Math.min(
+                    dots.length - 1,
+                    index
+                )
+            );
+
+        dots.forEach(
+            (dot, i) => {
+
+                dot.classList.toggle(
+                    "active",
+                    i === index
+                );
+            }
+        );
+    }
+
+    pages.addEventListener(
+        "scroll",
+        update,
+        { passive: true }
+    );
+
+    update();
+}
+
+
+bindRightIndicator();
+
+
+/* =========================================================
+   WEATHER
+   Open-Meteo / 交野市
+========================================================= */
+
+const WEATHER_LAT = 34.7025;
+const WEATHER_LON = 135.6667;
+
+const FORECAST_URL =
+    "https://api.open-meteo.com/v1/forecast" +
+    "?latitude=" + WEATHER_LAT +
+    "&longitude=" + WEATHER_LON +
+    "&current=" +
+    "temperature_2m," +
+    "relative_humidity_2m," +
+    "apparent_temperature," +
+    "weather_code," +
+    "is_day" +
+    "&daily=" +
+    "temperature_2m_max," +
+    "temperature_2m_min" +
+    "&timezone=Asia%2FTokyo";
+
+
+const ICONS = {
+
+    sun:
+        '<svg viewBox="0 0 100 100">' +
+        '<circle cx="50" cy="50" r="22" fill="#FFD34D"/>' +
+        '<g stroke="#FFD34D" stroke-width="6" stroke-linecap="round">' +
+        '<line x1="50" y1="6" x2="50" y2="20"/>' +
+        '<line x1="50" y1="80" x2="50" y2="94"/>' +
+        '<line x1="6" y1="50" x2="20" y2="50"/>' +
+        '<line x1="80" y1="50" x2="94" y2="50"/>' +
+        '<line x1="18" y1="18" x2="28" y2="28"/>' +
+        '<line x1="72" y1="72" x2="82" y2="82"/>' +
+        '<line x1="82" y1="18" x2="72" y2="28"/>' +
+        '<line x1="28" y1="72" x2="18" y2="82"/>' +
+        '</g></svg>',
+
+    moon:
+        '<svg viewBox="0 0 100 100">' +
+        '<path d="M62 12a38 38 0 1 0 26 62 30 30 0 0 1-26-62z" fill="#F1F3F8"/>' +
+        '</svg>',
+
+    cloud:
+        '<svg viewBox="0 0 100 100">' +
+        '<path d="M28 68a20 20 0 0 1-2-40 26 26 0 0 1 50-8 22 22 0 0 1-4 48H28z" fill="#E7ECF2"/>' +
+        '</svg>',
+
+    cloudNight:
+        '<svg viewBox="0 0 100 100">' +
+        '<path d="M72 10a14 14 0 1 0 10 23 11 11 0 0 1-10-23z" fill="#D7DEEA"/>' +
+        '<path d="M28 68a20 20 0 0 1-2-40 26 26 0 0 1 50-8 22 22 0 0 1-4 48H28z" fill="#8D97A8"/>' +
+        '</svg>',
+
+    cloudSun:
+        '<svg viewBox="0 0 100 100">' +
+        '<circle cx="68" cy="30" r="16" fill="#FFD34D"/>' +
+        '<path d="M22 70a18 18 0 0 1-2-36 24 24 0 0 1 45-8 20 20 0 0 1-4 44H22z" fill="#E7ECF2"/>' +
+        '</svg>',
+
+    rain:
+        '<svg viewBox="0 0 100 100">' +
+        '<path d="M26 56a18 18 0 0 1-2-36 24 24 0 0 1 45-7 20 20 0 0 1-4 43H26z" fill="#C7D2DE"/>' +
+        '<g stroke="#7FB3F5" stroke-width="6" stroke-linecap="round">' +
+        '<line x1="34" y1="74" x2="30" y2="90"/>' +
+        '<line x1="52" y1="74" x2="48" y2="90"/>' +
+        '<line x1="70" y1="74" x2="66" y2="90"/>' +
+        '</g></svg>',
+
+    rainNight:
+        '<svg viewBox="0 0 100 100">' +
+        '<path d="M66 6a12 12 0 1 0 9 20 9.5 9.5 0 0 1-9-20z" fill="#C9D3E2"/>' +
+        '<path d="M26 56a18 18 0 0 1-2-36 24 24 0 0 1 45-7 20 20 0 0 1-4 43H26z" fill="#7C8798"/>' +
+        '<g stroke="#5C82B8" stroke-width="6" stroke-linecap="round">' +
+        '<line x1="34" y1="74" x2="30" y2="90"/>' +
+        '<line x1="52" y1="74" x2="48" y2="90"/>' +
+        '<line x1="70" y1="74" x2="66" y2="90"/>' +
+        '</g></svg>',
+
+    snow:
+        '<svg viewBox="0 0 100 100">' +
+        '<path d="M26 56a18 18 0 0 1-2-36 24 24 0 0 1 45-7 20 20 0 0 1-4 43H26z" fill="#D7E3EE"/>' +
+        '<g fill="#EAF3FC">' +
+        '<circle cx="34" cy="80" r="4"/>' +
+        '<circle cx="52" cy="86" r="4"/>' +
+        '<circle cx="70" cy="80" r="4"/>' +
+        '</g></svg>',
+
+    snowNight:
+        '<svg viewBox="0 0 100 100">' +
+        '<path d="M66 6a12 12 0 1 0 9 20 9.5 9.5 0 0 1-9-20z" fill="#D7E3EE"/>' +
+        '<path d="M26 56a18 18 0 0 1-2-36 24 24 0 0 1 45-7 20 20 0 0 1-4 43H26z" fill="#8695A8"/>' +
+        '<g fill="#C7DAEF">' +
+        '<circle cx="34" cy="80" r="4"/>' +
+        '<circle cx="52" cy="86" r="4"/>' +
+        '<circle cx="70" cy="80" r="4"/>' +
+        '</g></svg>',
+
+    thunder:
+        '<svg viewBox="0 0 100 100">' +
+        '<path d="M26 54a18 18 0 0 1-2-36 24 24 0 0 1 45-6 20 20 0 0 1-4 42H26z" fill="#9FAFC2"/>' +
+        '<polygon points="58,60 44,80 52,80 42,96 68,72 58,72" fill="#FFD34D"/>' +
+        '</svg>',
+
+    thunderNight:
+        '<svg viewBox="0 0 100 100">' +
+        '<path d="M64 4a12 12 0 1 0 9 20 9.5 9.5 0 0 1-9-20z" fill="#B9C4D6"/>' +
+        '<path d="M26 54a18 18 0 0 1-2-36 24 24 0 0 1 45-6 20 20 0 0 1-4 42H26z" fill="#5E6779"/>' +
+        '<polygon points="58,60 44,80 52,80 42,96 68,72 58,72" fill="#FFD34D"/>' +
+        '</svg>',
+
+    fog:
+        '<svg viewBox="0 0 100 100">' +
+        '<g stroke="#C7D2DE" stroke-width="7" stroke-linecap="round">' +
+        '<line x1="16" y1="38" x2="84" y2="38"/>' +
+        '<line x1="10" y1="54" x2="90" y2="54"/>' +
+        '<line x1="16" y1="70" x2="84" y2="70"/>' +
+        '</g></svg>',
+
+    fogNight:
+        '<svg viewBox="0 0 100 100">' +
+        '<path d="M70 8a11 11 0 1 0 8 18 8.7 8.7 0 0 1-8-18z" fill="#C3CCDA"/>' +
+        '<g stroke="#7C8798" stroke-width="7" stroke-linecap="round">' +
+        '<line x1="16" y1="42" x2="84" y2="42"/>' +
+        '<line x1="10" y1="58" x2="90" y2="58"/>' +
+        '<line x1="16" y1="74" x2="84" y2="74"/>' +
+        '</g></svg>'
+};
+
+
+function getWeatherInfo(
+    code,
+    isDay
+) {
+
+    const day =
+        isDay === 1;
+
+    if (code === 0) {
+
+        return {
+
+            icon:
+                day
+                    ? ICONS.sun
+                    : ICONS.moon,
+
+            desc: "快晴",
+
+            bg:
+                day
+                    ? "linear-gradient(165deg,#6fb1f0 0%,#3a7fd6 55%,#2e63b0 100%)"
+                    : "linear-gradient(165deg,#14213d 0%,#0b1530 60%,#060a1a 100%)"
+        };
+    }
+
+    if (code === 1 || code === 2) {
+
+        return {
+
+            icon:
+                day
+                    ? ICONS.cloudSun
+                    : ICONS.cloud,
+
+            desc: "一部くもり",
+
+            bg:
+                day
+                    ? "linear-gradient(165deg,#7db8e8 0%,#4d84c4 55%,#3a6aa3 100%)"
+                    : "linear-gradient(165deg,#262f45 0%,#171d30 60%,#10141f 100%)"
+        };
+    }
+
+    if (code === 3) {
+
+        return {
+
+            icon: ICONS.cloud,
+
+            desc: "くもり",
+
+            bg:
+                day
+                    ? "linear-gradient(165deg,#8b98a6 0%,#6b7786 55%,#545e6b 100%)"
+                    : "linear-gradient(165deg,#2b3040 0%,#1c1f2b 60%,#12141d 100%)"
+        };
+    }
+
+    if (code === 45 || code === 48) {
+
+        return {
+
+            icon: ICONS.fog,
+
+            desc: "霧",
+
+            bg:
+                day
+                    ? "linear-gradient(165deg,#9aa5b1 0%,#7c8794 55%,#636d78 100%)"
+                    : "linear-gradient(165deg,#333a47 0%,#22262f 60%,#15171d 100%)"
+        };
+    }
+
+    if (
+        [
+            51, 53, 55,
+            61, 63, 65,
+            80, 81, 82
+        ].includes(code)
+    ) {
+
+        return {
+
+            icon: ICONS.rain,
+
+            desc:
+                code >= 80
+                    ? "にわか雨"
+                    : "雨",
+
+            bg:
+                day
+                    ? "linear-gradient(165deg,#5b7186 0%,#3d5163 55%,#2b3a49 100%)"
+                    : "linear-gradient(165deg,#1e2733 0%,#141b25 60%,#0c1017 100%)"
+        };
+    }
+
+    if (
+        [
+            71, 73, 75,
+            77, 85, 86
+        ].includes(code)
+    ) {
+
+        return {
+
+            icon: ICONS.snow,
+
+            desc: "雪",
+
+            bg:
+                day
+                    ? "linear-gradient(165deg,#93b3d1 0%,#6f93b8 55%,#56779c 100%)"
+                    : "linear-gradient(165deg,#2a3648 0%,#1b2432 60%,#111722 100%)"
+        };
+    }
+
+    if (
+        [
+            95, 96, 99
+        ].includes(code)
+    ) {
+
+        return {
+
+            icon: ICONS.thunder,
+
+            desc: "雷雨",
+
+            bg:
+                day
+                    ? "linear-gradient(165deg,#4a4f63 0%,#33374a 55%,#212433 100%)"
+                    : "linear-gradient(165deg,#23252f 0%,#161720 60%,#0d0e14 100%)"
+        };
+    }
+
+    return {
+
+        icon: ICONS.cloud,
+
+        desc: "不明",
+
+        bg:
+            "linear-gradient(165deg,#6fb1f0 0%,#3a7fd6 55%,#2e63b0 100%)"
+    };
+}
+
+
+function showWeatherError(
+    message,
+    isHtml
+) {
+
+    const el =
+        document.getElementById(
+            "weatherError"
+        );
+
+    if (!el) {
+        return;
+    }
+
+    if (isHtml) {
+        el.innerHTML = message;
+    } else {
+        el.textContent = message;
+    }
+
+    el.classList.add("show");
+}
+
+
+function clearWeatherError() {
+
+    const el =
+        document.getElementById(
+            "weatherError"
+        );
+
+    if (el) {
+        el.classList.remove("show");
+    }
+}
+
+
+async function requestJson(url) {
+
+    const controller =
+        new AbortController();
+
+    const timeout =
+        setTimeout(
+            () => controller.abort(),
+            8000
+        );
+
+    try {
+
+        const response =
+            await fetch(
+                url,
+                {
+                    mode: "cors",
+                    cache: "no-store",
+                    signal: controller.signal
+                }
+            );
+
+        clearTimeout(timeout);
+
+        if (!response.ok) {
+
+            throw new Error(
+                "HTTP " +
+                response.status
+            );
+        }
+
+        return await response.json();
+
+    } catch (fetchError) {
+
+        clearTimeout(timeout);
+
+        return await new Promise(
+            (resolve, reject) => {
+
+                try {
+
+                    const xhr =
+                        new XMLHttpRequest();
+
+                    xhr.timeout = 8000;
+
+                    xhr.open(
+                        "GET",
+                        url,
+                        true
+                    );
+
+                    xhr.onload =
+                        function () {
+
+                            if (
+                                xhr.status >= 200 &&
+                                xhr.status < 300
+                            ) {
+
+                                try {
+
+                                    resolve(
+                                        JSON.parse(
+                                            xhr.responseText
+                                        )
+                                    );
+
+                                } catch (parseError) {
+
+                                    reject(
+                                        new Error(
+                                            "JSON解析エラー: " +
+                                            parseError.message
+                                        )
+                                    );
+                                }
+
+                            } else {
+
+                                reject(
+                                    new Error(
+                                        "XHR HTTP " +
+                                        xhr.status
+                                    )
+                                );
+                            }
+                        };
+
+                    xhr.onerror =
+                        function () {
+
+                            reject(
+                                new Error(
+                                    "ネットワーク到達不可"
+                                )
+                            );
+                        };
+
+                    xhr.ontimeout =
+                        function () {
+
+                            reject(
+                                new Error(
+                                    "通信がタイムアウト"
+                                )
+                            );
+                        };
+
+                    xhr.send();
+
+                } catch (xhrSetupError) {
+
+                    reject(
+                        new Error(
+                            xhrSetupError.message
+                        )
+                    );
+                }
+            }
+        );
+    }
+}
+
+
+async function updateWeather() {
+
+    try {
+
+        const data =
+            await requestJson(
+                FORECAST_URL
+            );
+
+        const temp =
+            Math.round(
+                data.current.temperature_2m
+            );
+
+        const feels =
+            Math.round(
+                data.current.apparent_temperature
+            );
+
+        const humidity =
+            data.current.relative_humidity_2m;
+
+        const code =
+            data.current.weather_code;
+
+        const isDay =
+            data.current.is_day;
+
+        const high =
+            Math.round(
+                data.daily.temperature_2m_max[0]
+            );
+
+        const low =
+            Math.round(
+                data.daily.temperature_2m_min[0]
+            );
+
+        const info =
+            getWeatherInfo(
+                code,
+                isDay
+            );
+
+        document.getElementById(
+            "weatherIconWrap"
+        ).innerHTML =
+            info.icon;
+
+        document.getElementById(
+            "weatherConditionSmall"
+        ).textContent =
+            info.desc;
+
+        document.getElementById(
+            "weatherTemp"
+        ).textContent =
+            temp + "°";
+
+        document.getElementById(
+            "weatherHigh"
+        ).textContent =
+            high + "°";
+
+        document.getElementById(
+            "weatherLow"
+        ).textContent =
+            low + "°";
+
+        document.getElementById(
+            "weatherHumidity"
+        ).textContent =
+            humidity + "%";
+
+        document.getElementById(
+            "weatherFeels"
+        ).textContent =
+            feels + "°";
+
+        document.getElementById(
+            "weatherPanel"
+        ).style.background =
+            info.bg;
+
+        const now =
+            new Date();
+
+        document.getElementById(
+            "weatherUpdated"
+        ).textContent =
+            "更新 " +
+            String(now.getHours())
+                .padStart(2, "0") +
+            ":" +
+            String(now.getMinutes())
+                .padStart(2, "0");
+
+        clearWeatherError();
+
+    } catch (error) {
+
+        document.getElementById(
+            "weatherConditionSmall"
+        ).textContent =
+            "取得できません";
+
+        showWeatherError(
+            "取得失敗: " +
+            error.message,
+            false
+        );
+    }
+}
+
+
+updateWeather();
+
+
+function scheduleWeatherUpdate() {
+
+    const now =
+        new Date();
+
+    const minutes =
+        now.getMinutes();
+
+    const nextMultipleOf5 =
+        Math.ceil(
+            (minutes + 1) / 5
+        ) * 5;
+
+    const next =
+        new Date(now);
+
+    next.setMinutes(
+        nextMultipleOf5,
+        0,
+        0
+    );
+
+    const delay =
+        next.getTime() -
+        now.getTime();
+
+    setTimeout(
+        () => {
+
+            updateWeather();
+
+            setInterval(
+                updateWeather,
+                5 * 60 * 1000
+            );
+
+        },
+        delay
+    );
+}
+
+
+scheduleWeatherUpdate();
+
+
+/* =========================================================
+   WINDOWS MEDIA CONTROL
+========================================================= */
+
+const WINDOWS_IP =
+    "192.168.68.50";
+
+const WINDOWS_PORT =
+    8765;
+
+let mediaSocket = null;
+let mediaReconnectTimer = null;
+
+
+/* =========================================================
+   MEDIA ELEMENTS
+========================================================= */
+
+const mediaStatus =
+    document.getElementById(
+        "mediaStatus"
+    );
+
+const mediaArt =
+    document.getElementById(
+        "mediaArt"
+    );
+
+const mediaSongTitle =
+    document.getElementById(
+        "mediaSongTitle"
+    );
+
+const mediaArtist =
+    document.getElementById(
+        "mediaArtist"
+    );
+
+
+/* =========================================================
+   MEDIA STATUS
+========================================================= */
+
+function setMediaStatus(text) {
+
+    if (mediaStatus) {
+
+        mediaStatus.textContent =
+            text;
+    }
+}
+
+
+/* =========================================================
+   PLAY / PAUSE
+========================================================= */
+
+function updatePlayButton(playing) {
+
+    const button =
+        document.querySelector(
+            ".media-play"
+        );
+
+    if (!button) {
+        return;
+    }
+
+    if (playing) {
+
+        button.innerHTML = `
+            <svg
+                class="pause-icon"
+                viewBox="0 0 24 24"
+                aria-hidden="true">
+
+                <rect
+                    x="6"
+                    y="5"
+                    width="4"
+                    height="14"
+                    rx="1">
+                </rect>
+
+                <rect
+                    x="14"
+                    y="5"
+                    width="4"
+                    height="14"
+                    rx="1">
+                </rect>
+
+            </svg>
+        `;
+
+        button.setAttribute(
+            "aria-label",
+            "一時停止"
+        );
+
+    } else {
+
+        button.innerHTML = `
+            <svg
+                class="play-icon"
+                viewBox="0 0 24 24"
+                aria-hidden="true">
+
+                <path d="
+                    M8 5
+                    v14
+                    l11-7
+                    Z
+                ">
+                </path>
+
+            </svg>
+        `;
+
+        button.setAttribute(
+            "aria-label",
+            "再生"
+        );
+    }
+}
+
+
+/* =========================================================
+   MEDIA IMAGE
+   画像サイズにカードを合わせない
+   カードサイズはCSSで固定
+========================================================= */
+
+function setMediaArtwork(thumbnail) {
+
+    if (!mediaArt) {
+        return;
+    }
+
+    if (
+        typeof thumbnail === "string" &&
+        thumbnail.trim() !== ""
+    ) {
+
+        /*
+         * 背景画像として設定。
+         *
+         * カードそのもののサイズは
+         * thumbnailのサイズに一切影響されない。
+         *
+         * cover:
+         *   カードいっぱいに表示
+         *
+         * 高解像度画像でも
+         * CSS側の固定サイズからはみ出さない。
+         */
+
+        mediaArt.style.backgroundImage =
+            "url('" +
+            thumbnail.replace(/'/g, "\\'") +
+            "')";
+
+        mediaArt.classList.add(
+            "has-art"
+        );
+
+    } else {
+
+        mediaArt.style.backgroundImage =
+            "";
+
+        mediaArt.classList.remove(
+            "has-art"
+        );
+    }
+}
+
+
+/* =========================================================
+   MEDIA UPDATE
+========================================================= */
+
+function updateMedia(data) {
+
+    if (!data) {
+        return;
+    }
+
+    if (data.connected) {
+
+        setMediaStatus(
+            data.playing
+                ? "再生中"
+                : "一時停止"
+        );
+
+    } else {
+
+        setMediaStatus(
+            "Windows 未接続"
+        );
+    }
+
+
+    if (mediaSongTitle) {
+
+        mediaSongTitle.textContent =
+            data.title ||
+            "再生中のメディア";
+    }
+
+
+    if (mediaArtist) {
+
+        mediaArtist.textContent =
+            data.artist ||
+            "";
+    }
+
+
+    /*
+     * 画像の縦横比や解像度は
+     * メディアカードのサイズに影響しない。
+     */
+    setMediaArtwork(
+        data.thumbnail
+    );
+
+
+    updatePlayButton(
+        data.playing === true
+    );
+}
+
+
+/* =========================================================
+   WEBSOCKET CONNECTION
+========================================================= */
+
+function connectMedia() {
+
+    if (
+        mediaSocket &&
+        (
+            mediaSocket.readyState ===
+                WebSocket.OPEN ||
+            mediaSocket.readyState ===
+                WebSocket.CONNECTING
+        )
+    ) {
+
+        return;
+    }
+
+    setMediaStatus(
+        "Windows 接続中…"
+    );
+
+    try {
+
+        mediaSocket =
+            new WebSocket(
+                "ws://" +
+                WINDOWS_IP +
+                ":" +
+                WINDOWS_PORT
+            );
+
+
+        mediaSocket.onopen =
+            function () {
+
+                setMediaStatus(
+                    "Windows 接続済み"
+                );
+            };
+
+
+        mediaSocket.onmessage =
+            function (event) {
+
+                try {
+
+                    const message =
+                        JSON.parse(
+                            event.data
+                        );
+
+
+                    if (
+                        message.type ===
+                        "media"
+                    ) {
+
+                        updateMedia(
+                            message.data
+                        );
+
+                        return;
+                    }
+
+
+                    if (
+                        message.type ===
+                        "command_result"
+                    ) {
+
+                        return;
+                    }
+
+                } catch (error) {
+
+                    console.error(
+                        "Media JSON error:",
+                        error
+                    );
+                }
+            };
+
+
+        mediaSocket.onclose =
+            function (event) {
+
+                mediaSocket = null;
+
+                setMediaStatus(
+                    "切断 code=" +
+                    event.code +
+                    " reason=" +
+                    (event.reason || "(なし)") +
+                    " clean=" +
+                    event.wasClean
+                );
+
+                scheduleMediaReconnect();
+            };
+
+
+        mediaSocket.onerror =
+            function (event) {
+
+                setMediaStatus(
+                    "エラー: readyState=" +
+                    (mediaSocket ? mediaSocket.readyState : "null") +
+                    " url=" +
+                    (mediaSocket ? mediaSocket.url : "null")
+                );
+
+                console.error(
+                    "WebSocket error event:",
+                    event
+                );
+            };
+
+
+    } catch (error) {
+
+        mediaSocket = null;
+
+        setMediaStatus(
+            "接続エラー"
+        );
+
+        scheduleMediaReconnect();
+    }
+}
+
+
+/* =========================================================
+   RECONNECT
+========================================================= */
+
+function scheduleMediaReconnect() {
+
+    if (mediaReconnectTimer) {
+        return;
+    }
+
+    mediaReconnectTimer =
+        setTimeout(
+            () => {
+
+                mediaReconnectTimer =
+                    null;
+
+                connectMedia();
+
+            },
+            3000
+        );
+}
+
+
+/* =========================================================
+   SEND MEDIA COMMAND
+========================================================= */
+
+function mediaSend(command) {
+
+    if (
+        mediaSocket &&
+        mediaSocket.readyState ===
+        WebSocket.OPEN
+    ) {
+
+        mediaSocket.send(
+            JSON.stringify({
+                type: "command",
+                command: command
+            })
+        );
+
+        return true;
+    }
+
+    setMediaStatus(
+        "Windows 未接続"
+    );
+
+    return false;
+}
+
+
+window.mediaSend =
+    mediaSend;
+
+
+/* =========================================================
+   VOLUME
+========================================================= */
+
+const volumeSlider =
+    document.getElementById(
+        "volumeSlider"
+    );
+
+const volumeValue =
+    document.getElementById(
+        "volumeValue"
+    );
+
+
+if (
+    volumeSlider &&
+    volumeValue
+) {
+
+    volumeSlider.addEventListener(
+        "input",
+        function () {
+
+            volumeValue.textContent =
+                this.value;
+
+            mediaSend(
+                "VOL:" +
+                this.value
+            );
+        }
+    );
+}
+
+
+/* =========================================================
+   START MEDIA
+========================================================= */
+
+connectMedia();
+
+
+/* =========================================================
+   TRAIN (学研都市線 星田駅 → 京橋方面)
+   時刻表データは2025.03.15改正ダイヤに基づく固定値
+========================================================= */
+
+// 平日ダイヤ（"時:分"の配列）
+const TRAIN_WEEKDAY = [
+    "5:13","5:39","5:52",
+    "6:08","6:15","6:25","6:34","6:39","6:44","6:51","6:55",
+    "7:01","7:06","7:14","7:19","7:24","7:29","7:35","7:44","7:51","7:56",
+    "8:02","8:07","8:16","8:20","8:25","8:30","8:37","8:41","8:47","8:57",
+    "9:03","9:09","9:13","9:17","9:21","9:29","9:33","9:43","9:47",
+    "10:00","10:15","10:30","10:45",
+    "11:00","11:15","11:30","11:45",
+    "12:00","12:15","12:30","12:45",
+    "13:00","13:15","13:30","13:45",
+    "14:00","14:15","14:30","14:45",
+    "15:00","15:13","15:18","15:29","15:34","15:44","15:48","15:59",
+    "16:03","16:14","16:18","16:29","16:33","16:44","16:48","16:59",
+    "17:03","17:14","17:18","17:29","17:33","17:44","17:48","17:59",
+    "18:04","18:14","18:18","18:29","18:33","18:44","18:48","18:59",
+    "19:04","19:14","19:18","19:29","19:33","19:44","19:48","19:59",
+    "20:04","20:14","20:18","20:29","20:33","20:44","20:48","20:59",
+    "21:04","21:14","21:19","21:29","21:34","21:49","21:54",
+    "22:09","22:14","22:29","22:35","22:49","22:55",
+    "23:10","23:35","23:59"
+];
+
+// 土日祝ダイヤ
+const TRAIN_WEEKEND = [
+    "5:13","5:39","5:52",
+    "6:09","6:18","6:29","6:42","6:48","6:55",
+    "7:01","7:07","7:18","7:25","7:31","7:37","7:48","7:55",
+    "8:01","8:07","8:18","8:25","8:31","8:37","8:48","8:55",
+    "9:01","9:07","9:18","9:25","9:30","9:37","9:48","9:54",
+    "10:00","10:07","10:18","10:25","10:30","10:37","10:47","10:55",
+    "11:01","11:07","11:18","11:25","11:31","11:37","11:48","11:55",
+    "12:03","12:15","12:30","12:45",
+    "13:00","13:15","13:30","13:45",
+    "14:00","14:15","14:30","14:45",
+    "15:00","15:13","15:18","15:29","15:34","15:44","15:48","15:59",
+    "16:03","16:14","16:18","16:29","16:33","16:44","16:48","16:59",
+    "17:03","17:14","17:18","17:29","17:33","17:44","17:48","17:59",
+    "18:03","18:14","18:18","18:29","18:33","18:44","18:48","18:59",
+    "19:03","19:14","19:18","19:29","19:33","19:44","19:48","19:59",
+    "20:04","20:14","20:19","20:29","20:34","20:49","20:54",
+    "21:09","21:14","21:29","21:34","21:49","21:54",
+    "22:09","22:14","22:29","22:35","22:49","22:55",
+    "23:10","23:35","23:59"
+];
+
+// 学研都市線の遅延情報取得に使うキーワード（rti-giken.jp APIのarea/name判定用）
+const TRAIN_LINE_KEYWORDS = [
+    "学研都市線",
+    "片町線",
+    "東西線"
+];
+
+const trainCountdownEl =
+    document.getElementById(
+        "trainCountdown"
+    );
+
+const trainNextTimeEl =
+    document.getElementById(
+        "trainNextTime"
+    );
+
+const trainUpcomingEl =
+    document.getElementById(
+        "trainUpcoming"
+    );
+
+const trainDelayEl =
+    document.getElementById(
+        "trainDelay"
+    );
+
+
+function getTrainTimetable() {
+
+    const day =
+        new Date().getDay();
+
+    // 0=日曜, 6=土曜 → 土日祝ダイヤ、それ以外は平日ダイヤ
+    if (day === 0 || day === 6) {
+        return TRAIN_WEEKEND;
+    }
+
+    return TRAIN_WEEKDAY;
+}
+
+
+function parseTrainTime(str) {
+
+    const parts =
+        str.split(":");
+
+    return {
+        hour: parseInt(parts[0], 10),
+        minute: parseInt(parts[1], 10)
+    };
+}
+
+
+function updateTrainCountdown() {
+
+    const now = new Date();
+
+    const nowMinutes =
+        now.getHours() * 60 +
+        now.getMinutes();
+
+    const timetable =
+        getTrainTimetable();
+
+    // 現在時刻より後の便を探す
+    let upcoming = [];
+
+    for (let i = 0; i < timetable.length; i++) {
+
+        const t =
+            parseTrainTime(
+                timetable[i]
+            );
+
+        const tMinutes =
+            t.hour * 60 + t.minute;
+
+        if (tMinutes >= nowMinutes) {
+            upcoming.push(timetable[i]);
+        }
+
+        if (upcoming.length >= 4) {
+            break;
+        }
+    }
+
+    if (upcoming.length === 0) {
+
+        trainCountdownEl.textContent =
+            "終電後";
+
+        trainNextTimeEl.textContent =
+            "--:--";
+
+        trainUpcomingEl.innerHTML = "";
+
+        return;
+    }
+
+    const nextTime =
+        parseTrainTime(upcoming[0]);
+
+    const nextMinutes =
+        nextTime.hour * 60 +
+        nextTime.minute;
+
+    const diffMinutes =
+        nextMinutes - nowMinutes;
+
+    trainCountdownEl.textContent =
+        diffMinutes <= 0 ?
+            "まもなく" :
+            diffMinutes + "分";
+
+    trainNextTimeEl.textContent =
+        upcoming[0] + " 発";
+
+    // 2本目以降を一覧表示
+    let html = "";
+
+    for (let i = 1; i < upcoming.length; i++) {
+
+        const t =
+            parseTrainTime(upcoming[i]);
+
+        const tMinutes =
+            t.hour * 60 + t.minute;
+
+        const diff =
+            tMinutes - nowMinutes;
+
+        html +=
+            '<div class="train-upcoming-row">' +
+            '<span>' + upcoming[i] + '</span>' +
+            '<span class="dim">' + diff + '分後</span>' +
+            '</div>';
+    }
+
+    trainUpcomingEl.innerHTML = html;
+}
+
+
+async function updateTrainDelay() {
+
+    try {
+
+        const response =
+            await fetch(
+                "https://rti-giken.jp/fhc/api/train_tetsudo/?fmt=json"
+            );
+
+        const data =
+            await response.json();
+
+        const hit =
+            data.find(
+                (item) => {
+
+                    return TRAIN_LINE_KEYWORDS.some(
+                        (keyword) => {
+                            return (
+                                item.name &&
+                                item.name.indexOf(keyword) !== -1
+                            );
+                        }
+                    );
+                }
+            );
+
+        if (hit) {
+
+            trainDelayEl.textContent =
+                "⚠ " + hit.name + ": " + hit.status;
+
+            trainDelayEl.classList.add(
+                "has-delay"
+            );
+
+        } else {
+
+            trainDelayEl.textContent =
+                "学研都市線: 平常運転";
+
+            trainDelayEl.classList.remove(
+                "has-delay"
+            );
+        }
+
+    } catch (error) {
+
+        trainDelayEl.textContent =
+            "運行情報の取得に失敗しました";
+
+        console.error(
+            "train delay fetch error:",
+            error
+        );
+    }
+}
+
+
+updateTrainCountdown();
+updateTrainDelay();
+
+setInterval(updateTrainCountdown, 15000);
+setInterval(updateTrainDelay, 5 * 60 * 1000);
+</script>
+
+
+<script>
+/* =========================================================
+   TODO (Google Tasks / OAuth)
+========================================================= */
+
+/*
+   ここに自分のOAuthクライアントIDを入れてね。
+   Google Cloud Console →
+   APIとサービス → 認証情報 →
+   OAuthクライアントID(ウェブアプリケーション)を作成し、
+   「承認済みのJavaScript生成元」に
+   このHTMLを配信するURL(http://localhost:xxxx など)を登録する。
+   ついでにAPIライブラリでGoogle Tasks APIを有効化しておくこと。
+*/
+const TODO_CLIENT_ID = "141875736228-sc3abgolsa63hc6rocs13kuaj79emvqb.apps.googleusercontent.com";
+
+const TODO_SCOPE = "https://www.googleapis.com/auth/tasks";
+
+const TODO_TOKEN_STORAGE_KEY = "todo_gtasks_token";
+
+let todoTokenClient = null;
+let todoAccessToken = null;
+let todoTokenExpiresAt = 0;
+
+function todoLoadStoredToken() {
+
+    try {
+
+        const raw =
+            localStorage.getItem(TODO_TOKEN_STORAGE_KEY);
+
+        if (!raw) return null;
+
+        const parsed = JSON.parse(raw);
+
+        if (
+            parsed &&
+            parsed.token &&
+            parsed.expiresAt > Date.now()
+        ) {
+            return parsed;
+        }
+
+    } catch (e) {
+        console.error("todo token parse error:", e);
+    }
+
+    return null;
+}
+
+function todoSaveToken(token, expiresInSec) {
+
+    todoAccessToken = token;
+
+    todoTokenExpiresAt =
+        Date.now() + (expiresInSec * 1000);
+
+    try {
+
+        localStorage.setItem(
+            TODO_TOKEN_STORAGE_KEY,
+            JSON.stringify({
+                token: token,
+                expiresAt: todoTokenExpiresAt
+            })
+        );
+
+    } catch (e) {
+        console.error("todo token save error:", e);
+    }
+}
+
+function todoInitGis() {
+
+    if (
+        typeof google === "undefined" ||
+        !google.accounts ||
+        !google.accounts.oauth2
+    ) {
+        // GISスクリプトの読み込み待ち
+        setTimeout(todoInitGis, 300);
+        return;
+    }
+
+    todoTokenClient =
+        google.accounts.oauth2.initTokenClient({
+            client_id: TODO_CLIENT_ID,
+            scope: TODO_SCOPE,
+            callback: (resp) => {
+
+                if (resp.error) {
+
+                    console.error(
+                        "todo auth error:",
+                        resp
+                    );
+
+                    document.getElementById(
+                        "todoStatus"
+                    ).textContent =
+                        "サインインに失敗したよ";
+
+                    return;
+                }
+
+                todoSaveToken(
+                    resp.access_token,
+                    resp.expires_in
+                );
+
+                todoOnSignedIn();
+            }
+        });
+
+    // 前回のトークンが有効ならそのまま復元
+    const stored = todoLoadStoredToken();
+
+    if (stored) {
+
+        todoAccessToken = stored.token;
+        todoTokenExpiresAt = stored.expiresAt;
+
+        todoOnSignedIn();
+
+    } else {
+
+        // 同意済みなら無言(ポップアップ無し)で
+        // トークン再取得を試みる
+        todoTokenClient.requestAccessToken({
+            prompt: ""
+        });
+    }
+}
+
+function todoSignIn() {
+
+    if (!todoTokenClient) return;
+
+    todoTokenClient.requestAccessToken({
+        prompt: "consent"
+    });
+}
+
+function todoOnSignedIn() {
+
+    document.getElementById(
+        "todoSignInBtn"
+    ).style.display = "none";
+
+    document.getElementById(
+        "todoRefreshBtn"
+    ).style.display = "inline-block";
+
+    todoFetchTasks();
+}
+
+async function todoFetchTasks() {
+
+    const listEl =
+        document.getElementById("todoList");
+
+    if (
+        !todoAccessToken ||
+        todoTokenExpiresAt < Date.now()
+    ) {
+
+        // 期限切れ→ポップアップ無しで再取得を試す
+        if (todoTokenClient) {
+
+            todoTokenClient.requestAccessToken({
+                prompt: ""
+            });
+        }
+
+        return;
+    }
+
+    try {
+
+        const res = await fetch(
+            "https://tasks.googleapis.com/tasks/v1/lists/@default/tasks" +
+            "?showCompleted=true&showHidden=false&maxResults=30",
+            {
+                headers: {
+                    Authorization:
+                        "Bearer " + todoAccessToken
+                }
+            }
+        );
+
+        if (!res.ok) {
+
+            throw new Error(
+                "HTTP " + res.status
+            );
+        }
+
+        const data = await res.json();
+
+        todoRenderTasks(data.items || []);
+
+        document.getElementById(
+            "todoUpdated"
+        ).textContent =
+            "更新 " +
+            new Date().toLocaleTimeString(
+                "ja-JP",
+                {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                }
+            );
+
+    } catch (error) {
+
+        console.error(
+            "todo fetch error:",
+            error
+        );
+
+        listEl.innerHTML =
+            '<div class="todo-status">タスクの取得に失敗したよ</div>';
+    }
+}
+
+function todoRenderTasks(items) {
+
+    const listEl =
+        document.getElementById("todoList");
+
+    // 未完了を上、完了を下に。期限があれば期限順
+    const sorted = items.slice().sort((a, b) => {
+
+        const aDone = a.status === "completed" ? 1 : 0;
+        const bDone = b.status === "completed" ? 1 : 0;
+
+        if (aDone !== bDone) return aDone - bDone;
+
+        const aDue =
+            a.due ? new Date(a.due).getTime() : Infinity;
+
+        const bDue =
+            b.due ? new Date(b.due).getTime() : Infinity;
+
+        return aDue - bDue;
+    });
+
+    if (sorted.length === 0) {
+
+        listEl.innerHTML =
+            '<div class="todo-status">タスクは無いみたい</div>';
+
+        return;
+    }
+
+    listEl.innerHTML = "";
+
+    sorted.forEach((task) => {
+
+        const done = task.status === "completed";
+
+        const item = document.createElement("div");
+        item.className = "todo-item";
+
+        const titleHtml =
+            '<div class="todo-text' +
+            (done ? " done" : "") +
+            '">' +
+            todoEscapeHtml(task.title || "(無題)") +
+            "</div>";
+
+        const notesHtml =
+            task.notes
+                ? '<div class="todo-notes' +
+                  (done ? " done" : "") +
+                  '">' +
+                  todoEscapeHtml(task.notes) +
+                  "</div>"
+                : "";
+
+        const dueHtml =
+            task.due
+                ? '<div class="todo-due' +
+                  (done ? " done" : "") +
+                  '">' +
+                  todoFormatDue(task.due) +
+                  "</div>"
+                : "";
+
+        item.innerHTML =
+            '<div class="todo-checkbox' +
+            (done ? " done" : "") +
+            '"></div>' +
+            '<div class="todo-item-body">' +
+            titleHtml +
+            notesHtml +
+            dueHtml +
+            "</div>";
+
+        item.addEventListener("click", () => {
+            todoToggleTask(task, !done);
+        });
+
+        listEl.appendChild(item);
+    });
+}
+
+function todoEscapeHtml(str) {
+
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+function todoFormatDue(dueStr) {
+
+    const d = new Date(dueStr);
+
+    const weekdays =
+        ["日", "月", "火", "水", "木", "金", "土"];
+
+    const m = d.getMonth() + 1;
+    const day = d.getDate();
+    const w = weekdays[d.getDay()];
+
+    return m + "/" + day + "(" + w + ")";
+}
+
+async function todoToggleTask(task, markDone) {
+
+    if (!todoAccessToken) return;
+
+    try {
+
+        await fetch(
+            "https://tasks.googleapis.com/tasks/v1/lists/@default/tasks/" +
+            task.id,
+            {
+                method: "PATCH",
+                headers: {
+                    Authorization:
+                        "Bearer " + todoAccessToken,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    status:
+                        markDone
+                            ? "completed"
+                            : "needsAction"
+                })
+            }
+        );
+
+        todoFetchTasks();
+
+    } catch (error) {
+
+        console.error(
+            "todo toggle error:",
+            error
+        );
+    }
+}
+
+function todoRefresh() {
+    todoFetchTasks();
+}
+
+todoInitGis();
+
+// 5分おきに自動更新
+setInterval(() => {
+
+    if (todoAccessToken) {
+        todoFetchTasks();
+    }
+
+}, 5 * 60 * 1000);
+</script>
+
+
+<script>
+/* =========================================================
+   KEEP (Google Keep / OAuth)
+========================================================= */
+
+/*
+   KeepはWorkspaceアカウント以外だと
+   PERMISSION_DENIED になることがある。
+   個人のGmailアカウントで動かない場合は
+   Keep API自体の対応範囲の問題なので注意。
+*/
+
+const KEEP_SCOPE =
+    "https://www.googleapis.com/auth/keep.readonly";
+
+const KEEP_TOKEN_STORAGE_KEY = "keep_gkeep_token";
+
+let keepTokenClient = null;
+let keepAccessToken = null;
+let keepTokenExpiresAt = 0;
+
+function keepLoadStoredToken() {
+
+    try {
+
+        const raw =
+            localStorage.getItem(KEEP_TOKEN_STORAGE_KEY);
+
+        if (!raw) return null;
+
+        const parsed = JSON.parse(raw);
+
+        if (
+            parsed &&
+            parsed.token &&
+            parsed.expiresAt > Date.now()
+        ) {
+            return parsed;
+        }
+
+    } catch (e) {
+        console.error("keep token parse error:", e);
+    }
+
+    return null;
+}
+
+function keepSaveToken(token, expiresInSec) {
+
+    keepAccessToken = token;
+
+    keepTokenExpiresAt =
+        Date.now() + (expiresInSec * 1000);
+
+    try {
+
+        localStorage.setItem(
+            KEEP_TOKEN_STORAGE_KEY,
+            JSON.stringify({
+                token: token,
+                expiresAt: keepTokenExpiresAt
+            })
+        );
+
+    } catch (e) {
+        console.error("keep token save error:", e);
+    }
+}
+
+function keepInitGis() {
+
+    if (
+        typeof google === "undefined" ||
+        !google.accounts ||
+        !google.accounts.oauth2
+    ) {
+        setTimeout(keepInitGis, 300);
+        return;
+    }
+
+    keepTokenClient =
+        google.accounts.oauth2.initTokenClient({
+            client_id: TODO_CLIENT_ID,
+            scope: KEEP_SCOPE,
+            callback: (resp) => {
+
+                if (resp.error) {
+
+                    console.error(
+                        "keep auth error:",
+                        resp
+                    );
+
+                    document.getElementById(
+                        "keepStatus"
+                    ).textContent =
+                        "サインインに失敗したよ";
+
+                    return;
+                }
+
+                keepSaveToken(
+                    resp.access_token,
+                    resp.expires_in
+                );
+
+                keepOnSignedIn();
+            }
+        });
+
+    const stored = keepLoadStoredToken();
+
+    if (stored) {
+
+        keepAccessToken = stored.token;
+        keepTokenExpiresAt = stored.expiresAt;
+
+        keepOnSignedIn();
+
+    } else {
+
+        keepTokenClient.requestAccessToken({
+            prompt: ""
+        });
+    }
+}
+
+function keepSignIn() {
+
+    if (!keepTokenClient) return;
+
+    keepTokenClient.requestAccessToken({
+        prompt: "consent"
+    });
+}
+
+function keepOnSignedIn() {
+
+    document.getElementById(
+        "keepSignInBtn"
+    ).style.display = "none";
+
+    document.getElementById(
+        "keepRefreshBtn"
+    ).style.display = "inline-block";
+
+    keepFetchNotes();
+}
+
+async function keepFetchNotes() {
+
+    const bodyEl =
+        document.getElementById("keepBody");
+
+    if (
+        !keepAccessToken ||
+        keepTokenExpiresAt < Date.now()
+    ) {
+
+        if (keepTokenClient) {
+
+            keepTokenClient.requestAccessToken({
+                prompt: ""
+            });
+        }
+
+        return;
+    }
+
+    try {
+
+        const res = await fetch(
+            "https://keep.googleapis.com/v1/notes?pageSize=30"
+        , {
+            headers: {
+                Authorization:
+                    "Bearer " + keepAccessToken
+            }
+        });
+
+        if (!res.ok) {
+
+            throw new Error(
+                "HTTP " + res.status
+            );
+        }
+
+        const data = await res.json();
+
+        keepRenderNotes(data.notes || []);
+
+        document.getElementById(
+            "keepUpdated"
+        ).textContent =
+            "更新 " +
+            new Date().toLocaleTimeString(
+                "ja-JP",
+                {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                }
+            );
+
+    } catch (error) {
+
+        console.error(
+            "keep fetch error:",
+            error
+        );
+
+        bodyEl.innerHTML =
+            '<div class="todo-status">メモの取得に失敗したよ' +
+            '<br>(個人アカウントだとKeep APIが' +
+            '使えないことがあるよ)</div>';
+    }
+}
+
+function keepRenderNotes(notes) {
+
+    const bodyEl =
+        document.getElementById("keepBody");
+
+    const badgeEl =
+        document.getElementById("keepCountBadge");
+
+    if (notes.length === 0) {
+
+        bodyEl.innerHTML =
+            '<div class="todo-status">メモは無いみたい</div>';
+
+        badgeEl.style.display = "none";
+
+        return;
+    }
+
+    // 更新が新しい順
+    const sorted = notes.slice().sort((a, b) => {
+
+        const aTime =
+            new Date(
+                a.updateTime || a.createTime
+            ).getTime();
+
+        const bTime =
+            new Date(
+                b.updateTime || b.createTime
+            ).getTime();
+
+        return bTime - aTime;
+    });
+
+    const top = sorted[0];
+    const rest = sorted.length - 1;
+
+    const title =
+        top.title && top.title.trim()
+            ? top.title
+            : "(無題)";
+
+    let bodyText = "";
+
+    if (top.body && top.body.text && top.body.text.text) {
+
+        bodyText = top.body.text.text;
+
+    } else if (top.body && top.body.list && top.body.list.listItems) {
+
+        bodyText =
+            top.body.list.listItems
+                .map((li) => {
+
+                    const mark =
+                        li.checked ? "[x] " : "[ ] ";
+
+                    return (
+                        mark +
+                        (li.text && li.text.text
+                            ? li.text.text
+                            : "")
+                    );
+                })
+                .join("\n");
+    }
+
+    const updated =
+        top.updateTime || top.createTime;
+
+    const updatedStr =
+        updated
+            ? new Date(updated).toLocaleDateString(
+                  "ja-JP",
+                  { month: "numeric", day: "numeric" }
+              )
+            : "";
+
+    bodyEl.innerHTML =
+        '<div class="keep-note">' +
+        '<div class="keep-note-title">' +
+        todoEscapeHtml(title) +
+        '</div>' +
+        '<div class="keep-note-body">' +
+        todoEscapeHtml(bodyText) +
+        '</div>' +
+        '<div class="keep-note-time">' +
+        updatedStr +
+        '</div>' +
+        '</div>';
+
+    if (rest > 0) {
+
+        badgeEl.textContent =
+            "+" + rest + "件";
+
+        badgeEl.style.display = "inline-block";
+
+    } else {
+
+        badgeEl.style.display = "none";
+    }
+}
+
+function keepRefresh() {
+    keepFetchNotes();
+}
+
+keepInitGis();
+
+// 5分おきに自動更新
+setInterval(() => {
+
+    if (keepAccessToken) {
+        keepFetchNotes();
+    }
+
+}, 5 * 60 * 1000);
+</script>
+</body>
+</html>
